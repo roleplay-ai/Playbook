@@ -10,43 +10,110 @@ const EMAIL_DOMAIN = "audit.nudgeable.local";
 
 export async function signInFacilitator(username: string) {
   const name = username.trim().toLowerCase();
+
+  // Email-style login (e.g. superadmin@nudgeapp): look up Supabase auth user by
+  // that email, then verify their profile is_admin flag.
+  if (name.includes("@")) {
+    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const authUser = users.find((u) => u.email?.toLowerCase() === name);
+    if (!authUser) {
+      return { ok: false, error: "No facilitator account found with that email." };
+    }
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", authUser.id)
+      .maybeSingle();
+    if (!profile?.is_admin) {
+      return { ok: false, error: "This account does not have facilitator access." };
+    }
+    return { ok: true, email: name };
+  }
+
+  // Short-name login (e.g. gaurav): look up by username in profiles, derive domain email.
   const { data: profile } = await supabaseAdmin
     .from("profiles")
-    .select("id, username, is_admin")
+    .select("id, is_admin")
     .eq("username", name)
-    .eq("is_admin", true)
     .maybeSingle();
 
   if (!profile) {
     return { ok: false, error: "No facilitator account found with that username." };
   }
-
+  if (!profile.is_admin) {
+    return { ok: false, error: "This account does not have facilitator access." };
+  }
   return { ok: true, email: `${name}@${EMAIL_DOMAIN}` };
 }
 
-export async function ensureAdmin() {
-  const { data: existing } = await supabaseAdmin
+async function ensureAdminAccount(email: string, password: string | null, username: string) {
+  // Check if a profile already exists for this username
+  const { data: existingProfile } = await supabaseAdmin
     .from("profiles")
-    .select("id")
-    .eq("username", ADMIN_USERNAME)
+    .select("id, is_admin")
+    .eq("username", username)
     .maybeSingle();
-  if (existing) return { ok: true };
 
-  const email = `${ADMIN_USERNAME}@${EMAIL_DOMAIN}`;
+  if (existingProfile) {
+    if (!existingProfile.is_admin) {
+      await supabaseAdmin.from("profiles").update({ is_admin: true }).eq("id", existingProfile.id);
+    }
+    return { ok: true };
+  }
+
+  // Check if a Supabase auth user already exists with this email
+  const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+  const existingAuthUser = users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
+
+  if (existingAuthUser) {
+    // Auth user exists but has no admin profile — link it
+    const { error: pErr } = await supabaseAdmin.from("profiles").upsert(
+      { id: existingAuthUser.id, username, is_admin: true },
+      { onConflict: "id" }
+    );
+    if (pErr) console.error("admin profile link failed", pErr);
+    return { ok: true };
+  }
+
+  // Auth user doesn't exist — create from scratch (requires password)
+  if (!password) {
+    console.warn("ensureAdminAccount: no auth user found for", email, "and no password provided; skipping");
+    return { ok: false, error: "Auth user not found" };
+  }
+
   const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({
     email,
-    password: ADMIN_PASSWORD,
+    password,
     email_confirm: true,
   });
   if (cErr || !created.user) {
-    console.error("admin create failed", cErr);
+    console.error("admin create failed", email, cErr);
     return { ok: false, error: cErr?.message };
   }
   const { error: pErr } = await supabaseAdmin.from("profiles").upsert(
-    { id: created.user.id, username: ADMIN_USERNAME, is_admin: true },
+    { id: created.user.id, username, is_admin: true },
     { onConflict: "id" }
   );
   if (pErr) console.error("admin profile insert failed", pErr);
+  return { ok: true };
+}
+
+export async function ensureAdmin() {
+  // Legacy default admin (short-username style)
+  await ensureAdminAccount(
+    `${ADMIN_USERNAME}@${EMAIL_DOMAIN}`,
+    ADMIN_PASSWORD,
+    ADMIN_USERNAME
+  );
+
+  // Additional facilitator from env — set FACILITATOR_EMAIL in .env.local.
+  // If the Supabase auth user already exists, no password needed (profile is auto-linked).
+  // If it doesn't exist yet, also set FACILITATOR_PASSWORD to create it.
+  const facEmail = process.env.FACILITATOR_EMAIL;
+  if (facEmail) {
+    await ensureAdminAccount(facEmail, process.env.FACILITATOR_PASSWORD ?? null, facEmail);
+  }
+
   return { ok: true };
 }
 
