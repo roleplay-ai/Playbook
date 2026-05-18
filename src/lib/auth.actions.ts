@@ -27,7 +27,7 @@ export async function ensureAdmin() {
     return { ok: false, error: cErr?.message };
   }
   const { error: pErr } = await supabaseAdmin.from("profiles").upsert(
-    { id: created.user.id, username: ADMIN_USERNAME, is_admin: true, role: "Admin" },
+    { id: created.user.id, username: ADMIN_USERNAME, is_admin: true },
     { onConflict: "id" }
   );
   if (pErr) console.error("admin profile insert failed", pErr);
@@ -83,7 +83,7 @@ export async function enterAudit(input: { email: string; company_id: string }) {
     return { ok: false, error: cErr?.message ?? "Could not create account" };
   }
   const { error: pErr } = await supabaseAdmin.from("profiles").upsert(
-    { id: created.user.id, username: email, company_id: data.company_id, role: "Other", is_admin: false },
+    { id: created.user.id, username: email, company_id: data.company_id, is_admin: false },
     { onConflict: "id" }
   );
   if (pErr) {

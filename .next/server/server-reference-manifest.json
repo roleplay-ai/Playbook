@@ -1,5 +1,81 @@
 {
-  "node": {},
+  "node": {
+    "0009bfb933bcc58a0896c05b3d3cef8d48e25e9a38": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/auth.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "ensureAdmin",
+          "filename": "src/lib/auth.actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "src/lib/auth.actions.ts",
+      "exportedName": "ensureAdmin"
+    },
+    "4050ea61edcb5858116d0d627dc2bb2ae31212f303": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/auth.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "enterAudit",
+          "filename": "src/lib/auth.actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "src/lib/auth.actions.ts",
+      "exportedName": "enterAudit"
+    },
+    "000dba9b08d6d229187db9891cc908aedaa48144c4": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/auth.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "listCompaniesPublic",
+          "filename": "src/lib/auth.actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "src/lib/auth.actions.ts",
+      "exportedName": "listCompaniesPublic"
+    },
+    "003db9b1cab6dfa091d8a9f1385c3811834e765594": {
+      "workers": {
+        "app/hub/page": {
+          "moduleId": "[project]/.next-internal/server/app/hub/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/playbook.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getPlaybookSummary",
+          "filename": "src/lib/playbook.actions.ts"
+        }
+      },
+      "layer": {
+        "app/hub/page": "action-browser"
+      },
+      "filename": "src/lib/playbook.actions.ts",
+      "exportedName": "getPlaybookSummary"
+    },
+    "0011697e328a2bb6e45c59326270cfd6948e87c17e": {
+      "workers": {
+        "app/hub/page": {
+          "moduleId": "[project]/.next-internal/server/app/hub/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/playbook.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAdminPlaybookOverview",
+          "filename": "src/lib/playbook.actions.ts"
+        }
+      },
+      "layer": {
+        "app/hub/page": "action-browser"
+      },
+      "filename": "src/lib/playbook.actions.ts",
+      "exportedName": "getAdminPlaybookOverview"
+    }
+  },
   "edge": {},
   "encryptionKey": "oIR8ujQZqqc6cFuBgq0FoZm7x+AM0wQuowX6VDB9hPc="
 }

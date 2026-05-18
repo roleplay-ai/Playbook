@@ -55,10 +55,10 @@ export default function IndexPage() {
     supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken }).catch(console.error);
   }, []);
 
-  // Redirect logged-in users; SSO users without a company stay to pick one first
+  // Redirect logged-in users; users without a company stay to pick one first
   useEffect(() => {
-    if (loading || !user || !profile) return;
-    if (!profile.company_id) {
+    if (loading || !user) return;
+    if (!profile || !profile.company_id) {
       setPickingCompany(true);
       return;
     }
@@ -71,8 +71,7 @@ export default function IndexPage() {
     setSavingCompany(true);
     try {
       const { error } = await (supabase.from("profiles") as any)
-        .update({ company_id: pickedCompanyId })
-        .eq("id", user!.id);
+        .upsert({ id: user!.id, company_id: pickedCompanyId }, { onConflict: "id" });
       if (error) throw error;
       router.push("/hub");
     } catch (err) {
