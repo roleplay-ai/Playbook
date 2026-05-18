@@ -8,6 +8,22 @@ const ADMIN_USERNAME = "gaurav";
 const ADMIN_PASSWORD = "nudge2026";
 const EMAIL_DOMAIN = "audit.nudgeable.local";
 
+export async function signInFacilitator(username: string) {
+  const name = username.trim().toLowerCase();
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("id, username, is_admin")
+    .eq("username", name)
+    .eq("is_admin", true)
+    .maybeSingle();
+
+  if (!profile) {
+    return { ok: false, error: "No facilitator account found with that username." };
+  }
+
+  return { ok: true, email: `${name}@${EMAIL_DOMAIN}` };
+}
+
 export async function ensureAdmin() {
   const { data: existing } = await supabaseAdmin
     .from("profiles")

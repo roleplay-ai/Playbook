@@ -4,8 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureAdmin, enterAudit, listCompaniesPublic } from "@/lib/auth.actions";
-import { usernameToEmail } from "@/lib/utils";
+import { ensureAdmin, enterAudit, listCompaniesPublic, signInFacilitator } from "@/lib/auth.actions";
 import { NudgeShell } from "@/components/NudgeShell";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -111,8 +110,10 @@ export default function IndexPage() {
     e.preventDefault();
     setBusy(true);
     try {
+      const lookup = await signInFacilitator(adminUser);
+      if (!lookup.ok || !lookup.email) throw new Error(lookup.error || "Not a facilitator account");
       const { error } = await supabase.auth.signInWithPassword({
-        email: usernameToEmail(adminUser),
+        email: lookup.email,
         password: adminPass,
       });
       if (error) throw error;
