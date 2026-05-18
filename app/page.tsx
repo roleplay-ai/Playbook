@@ -57,6 +57,10 @@ export default function IndexPage() {
   // Redirect logged-in users; users without a company stay to pick one first
   useEffect(() => {
     if (loading || !user) return;
+    if (profile?.is_admin) {
+      router.push("/admin");
+      return;
+    }
     if (!profile || !profile.company_id) {
       setPickingCompany(true);
       return;
