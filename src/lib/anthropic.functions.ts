@@ -69,7 +69,7 @@ Otherwise, set clarity="clear" and return 2-4 highly specific bullets. Each bull
 - say exactly how AI helps
 - estimate hours_saved per week (decimal, realistic, summing to ≤ ${act.weekly_hours})
 
-Also recommend ONE tool from: Claude Chat, Claude Project, Claude Skill, Claude Artifact, NotebookLM, Gemini, Google AI Studio, Lovable, Pabbly/n8n, VAPI.
+Also recommend ONE tool from: Claude Chat, Claude Project, Claude Skill, Claude Artifact, NotebookLM, Gemini, Google AI Studio, Pabbly/n8n, VAPI.
 
 Return JSON only:
 {"clarity":"clear|vague","tool":"...","bullets":[{"text":"...","hours_saved":0.5}]}`;
