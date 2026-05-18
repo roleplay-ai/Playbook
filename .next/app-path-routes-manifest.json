@@ -1,0 +1,10 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/activities/page": "/activities",
+  "/cab-diagnostic/page": "/cab-diagnostic",
+  "/ai-fit-test/page": "/ai-fit-test",
+  "/results/page": "/results",
+  "/page": "/",
+  "/hub/page": "/hub"
+}

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { ArrowRight, CheckCircle2, RotateCcw } from "lucide-react";
 
 export type ModuleStatus = "not_started" | "in_progress" | "completed";
@@ -93,17 +93,17 @@ export function ModuleStatusCard({
       <div className="mt-auto flex flex-wrap gap-2">
         {isDone ? (
           <>
-            <Link to={viewResultTo ?? to} className="n-btn n-btn-primary n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
+            <Link href={viewResultTo ?? to} className="n-btn n-btn-primary n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
               View Result <ArrowRight size={14} />
             </Link>
             {retakeTo && (
-              <Link to={retakeTo} className="n-btn n-btn-ghost n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
+              <Link href={retakeTo} className="n-btn n-btn-ghost n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
                 <RotateCcw size={13} /> Retake
               </Link>
             )}
           </>
         ) : (
-          <Link to={to} className="n-btn n-btn-primary n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
+          <Link href={to} className="n-btn n-btn-primary n-btn-press inline-flex items-center gap-1.5 !py-2 text-sm">
             {startCta} <ArrowRight size={14} />
           </Link>
         )}

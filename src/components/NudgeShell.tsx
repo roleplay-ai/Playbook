@@ -1,5 +1,18 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+
+function NavLink({ href, activeColor, children }: { href: string; activeColor: string; children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+  return (
+    <Link href={href} className="hover:underline" style={{ color: isActive ? activeColor : undefined }}>
+      {children}
+    </Link>
+  );
+}
 
 export function NudgeShell({ children }: { children: React.ReactNode }) {
   const { user, profile, signOut } = useAuth();
@@ -11,7 +24,7 @@ export function NudgeShell({ children }: { children: React.ReactNode }) {
         className="px-4 md:px-12 py-4 flex items-center justify-between gap-3 bg-white flex-wrap"
         style={{ boxShadow: "0 1px 0 #E8E6DC" }}
       >
-        <Link to={user ? "/hub" : "/"} className="flex flex-col leading-tight">
+        <Link href={user ? "/hub" : "/"} className="flex flex-col leading-tight">
           <span className="n-wordmark">NUDGEABLE.AI</span>
           <span className="text-[10px] font-bold tracking-wider uppercase" style={{ color: "#623CEA" }}>
             AI for Work Playbook
@@ -20,23 +33,11 @@ export function NudgeShell({ children }: { children: React.ReactNode }) {
 
         {user && (
           <nav className="hidden md:flex items-center gap-4 text-sm font-semibold" style={{ color: "#221D23" }}>
-            <Link to="/hub" className="hover:underline" activeProps={{ style: { color: "#623CEA" } }} activeOptions={{ exact: true }}>
-              Home
-            </Link>
-            <Link to="/cab-diagnostic" className="hover:underline" activeProps={{ style: { color: "#623CEA" } }}>
-              CAB Ladder
-            </Link>
-            <Link to="/ai-fit-test" className="hover:underline" activeProps={{ style: { color: "#3699FC" } }}>
-              AI Fit Test
-            </Link>
-            <Link to="/activities" className="hover:underline" activeProps={{ style: { color: "#F68A29" } }}>
-              AI Application Opportunities
-            </Link>
-            {isAdmin && (
-              <Link to="/admin" className="hover:underline" activeProps={{ style: { color: "#ED4551" } }}>
-                Admin
-              </Link>
-            )}
+            <NavLink href="/hub" activeColor="#623CEA">Home</NavLink>
+            <NavLink href="/cab-diagnostic" activeColor="#623CEA">CAB Ladder</NavLink>
+            <NavLink href="/ai-fit-test" activeColor="#3699FC">AI Fit Test</NavLink>
+            <NavLink href="/activities" activeColor="#F68A29">AI Application Opportunities</NavLink>
+            {isAdmin && <NavLink href="/admin" activeColor="#ED4551">Admin</NavLink>}
           </nav>
         )}
 
