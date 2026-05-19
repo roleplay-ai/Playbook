@@ -1,4 +1,8 @@
 {
+  "/activities/page": "app/activities/page.js",
+  "/ai-fit-test/page": "app/ai-fit-test/page.js",
+  "/cab-diagnostic/page": "app/cab-diagnostic/page.js",
   "/hub/page": "app/hub/page.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/results/page": "app/results/page.js"
 }

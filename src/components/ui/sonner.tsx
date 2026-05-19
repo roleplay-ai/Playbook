@@ -1,6 +1,12 @@
-import { Toaster as Sonner } from "sonner";
+"use client";
 
-type ToasterProps = React.ComponentProps<typeof Sonner>;
+import dynamic from "next/dynamic";
+import type { Toaster as SonnerToaster } from "sonner";
+import type { ComponentProps } from "react";
+
+const Sonner = dynamic(() => import("sonner").then((m) => ({ default: m.Toaster })), { ssr: false });
+
+type ToasterProps = ComponentProps<typeof SonnerToaster>;
 
 const Toaster = ({ ...props }: ToasterProps) => {
   return (

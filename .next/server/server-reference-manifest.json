@@ -45,6 +45,21 @@
       "filename": "src/lib/auth.actions.ts",
       "exportedName": "listCompaniesPublic"
     },
+    "4059647440671ac62ad4a2eba55c2fae26d1adc30d": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/auth.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "signInFacilitator",
+          "filename": "src/lib/auth.actions.ts"
+        }
+      },
+      "layer": {
+        "app/page": "action-browser"
+      },
+      "filename": "src/lib/auth.actions.ts",
+      "exportedName": "signInFacilitator"
+    },
     "003db9b1cab6dfa091d8a9f1385c3811834e765594": {
       "workers": {
         "app/hub/page": {
@@ -74,6 +89,81 @@
       },
       "filename": "src/lib/playbook.actions.ts",
       "exportedName": "getAdminPlaybookOverview"
+    },
+    "0056c4abf9bbae45d7f18d82e9f78954810b2f8c0c": {
+      "workers": {
+        "app/cab-diagnostic/page": {
+          "moduleId": "[project]/.next-internal/server/app/cab-diagnostic/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/cab.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getCabDiagnostic",
+          "filename": "src/lib/cab.actions.ts"
+        }
+      },
+      "layer": {
+        "app/cab-diagnostic/page": "action-browser"
+      },
+      "filename": "src/lib/cab.actions.ts",
+      "exportedName": "getCabDiagnostic"
+    },
+    "402628dc6b87ef5fa1a57dbbc21c1124566b9942e9": {
+      "workers": {
+        "app/cab-diagnostic/page": {
+          "moduleId": "[project]/.next-internal/server/app/cab-diagnostic/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/cab.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "submitCabAssessment",
+          "filename": "src/lib/cab.actions.ts"
+        }
+      },
+      "layer": {
+        "app/cab-diagnostic/page": "action-browser"
+      },
+      "filename": "src/lib/cab.actions.ts",
+      "exportedName": "submitCabAssessment"
+    },
+    "00c0915cde3dc31e613e6acd536c06f1f5fd6ef2e4": {
+      "workers": {
+        "app/ai-fit-test/page": {
+          "moduleId": "[project]/.next-internal/server/app/ai-fit-test/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/ai-fit.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAiFitTest",
+          "filename": "src/lib/ai-fit.actions.ts"
+        }
+      },
+      "layer": {
+        "app/ai-fit-test/page": "action-browser"
+      },
+      "filename": "src/lib/ai-fit.actions.ts",
+      "exportedName": "getAiFitTest"
+    },
+    "4064e76e1156c1554cdcbc8824559ced974aede842": {
+      "workers": {
+        "app/ai-fit-test/page": {
+          "moduleId": "[project]/.next-internal/server/app/ai-fit-test/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/ai-fit.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "submitAiFitTest",
+          "filename": "src/lib/ai-fit.actions.ts"
+        }
+      },
+      "layer": {
+        "app/ai-fit-test/page": "action-browser"
+      },
+      "filename": "src/lib/ai-fit.actions.ts",
+      "exportedName": "submitAiFitTest"
+    },
+    "40c59a9587332b8b80df6c35503a88474c08e6bd73": {
+      "workers": {
+        "app/activities/page": {
+          "moduleId": "[project]/.next-internal/server/app/activities/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/lib/anthropic.actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "recommendTools",
+          "filename": "src/lib/anthropic.actions.ts"
+        }
+      },
+      "layer": {
+        "app/activities/page": "action-browser"
+      },
+      "filename": "src/lib/anthropic.actions.ts",
+      "exportedName": "recommendTools"
     }
   },
   "edge": {},
