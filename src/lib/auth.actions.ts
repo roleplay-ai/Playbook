@@ -117,11 +117,11 @@ export async function ensureAdmin() {
   return { ok: true };
 }
 
-export async function saveUserCompany(userId: string, companyId: string) {
-  if (!userId || !companyId) return { ok: false, error: "Missing userId or companyId" };
+export async function saveUserCompany(userId: string, companyId: string, username: string) {
+  if (!userId || !companyId || !username) return { ok: false, error: "Missing required fields" };
   const { error } = await supabaseAdmin
     .from("profiles")
-    .upsert({ id: userId, company_id: companyId }, { onConflict: "id" });
+    .upsert({ id: userId, company_id: companyId, username }, { onConflict: "id" });
   if (error) return { ok: false, error: error.message };
   return { ok: true };
 }

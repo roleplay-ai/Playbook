@@ -73,7 +73,7 @@ export default function IndexPage() {
     if (!pickedCompanyId) return;
     setSavingCompany(true);
     try {
-      const res = await saveUserCompany(user!.id, pickedCompanyId);
+      const res = await saveUserCompany(user!.id, pickedCompanyId, user!.email ?? user!.id);
       if (!res.ok) throw new Error(res.error ?? "Could not save company");
       router.push("/hub");
     } catch (err) {
