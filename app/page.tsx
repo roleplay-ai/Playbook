@@ -29,18 +29,23 @@ function CompanyPicker({
 }) {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ left: number; top: number; width: number } | null>(null);
 
   const selected = companies.find((c) => c.id === value);
 
-  // close on outside click
+  // Close on outside click (menu is portaled — must include menuRef or clicks never register)
   useEffect(() => {
+    if (!open) return;
     function handle(e: MouseEvent) {
-      if (anchorRef.current && !anchorRef.current.contains(e.target as Node)) setOpen(false);
+      const t = e.target as Node;
+      if (anchorRef.current?.contains(t)) return;
+      if (menuRef.current?.contains(t)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
-  }, []);
+  }, [open]);
 
   // compute dropdown position (portal to body so it can't be clipped)
   useEffect(() => {
@@ -96,6 +101,7 @@ function CompanyPicker({
         pos &&
         createPortal(
           <div
+            ref={menuRef}
             className="rounded-2xl overflow-hidden"
             style={{
               position: "fixed",
