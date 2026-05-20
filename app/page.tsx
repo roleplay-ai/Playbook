@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureAdmin, enterAudit, listCompaniesPublic, signInFacilitator } from "@/lib/auth.actions";
+import { ensureAdmin, enterAudit, listCompaniesPublic, saveUserCompany, signInFacilitator } from "@/lib/auth.actions";
 import { NudgeShell } from "@/components/NudgeShell";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -73,9 +73,8 @@ export default function IndexPage() {
     if (!pickedCompanyId) return;
     setSavingCompany(true);
     try {
-      const { error } = await (supabase.from("profiles") as any)
-        .upsert({ id: user!.id, company_id: pickedCompanyId }, { onConflict: "id" });
-      if (error) throw error;
+      const res = await saveUserCompany(user!.id, pickedCompanyId);
+      if (!res.ok) throw new Error(res.error ?? "Could not save company");
       router.push("/hub");
     } catch (err) {
       toast.error((err as Error).message);

@@ -117,6 +117,15 @@ export async function ensureAdmin() {
   return { ok: true };
 }
 
+export async function saveUserCompany(userId: string, companyId: string) {
+  if (!userId || !companyId) return { ok: false, error: "Missing userId or companyId" };
+  const { error } = await supabaseAdmin
+    .from("profiles")
+    .upsert({ id: userId, company_id: companyId }, { onConflict: "id" });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
+}
+
 export async function listCompaniesPublic() {
   const { data, error } = await supabaseAdmin
     .from("companies")
