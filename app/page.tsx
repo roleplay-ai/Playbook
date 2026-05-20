@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureAdmin, enterAudit, listCompaniesPublic, saveUserCompany, signInFacilitator } from "@/lib/auth.actions";
 import { NudgeShell } from "@/components/NudgeShell";
 import { toast } from "sonner";
-import { Building2, Sparkles, BrainCircuit, Zap, Target, Search, Check, ChevronDown, Loader2 } from "lucide-react";
+import { Building2, Sparkles, BrainCircuit, Zap, Target, Check, ChevronDown, Loader2 } from "lucide-react";
 
 type LoadState = "loading" | "ready" | "error";
 
@@ -27,25 +28,40 @@ function CompanyPicker({
   onRetry?: () => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [q, setQ] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ left: number; top: number; width: number } | null>(null);
 
   const selected = companies.find((c) => c.id === value);
-  const filtered = q.trim()
-    ? companies.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()))
-    : companies;
 
   // close on outside click
   useEffect(() => {
     function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (anchorRef.current && !anchorRef.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener("mousedown", handle);
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  // compute dropdown position (portal to body so it can't be clipped)
+  useEffect(() => {
+    if (!open) return;
+    function updatePos() {
+      const el = anchorRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setPos({ left: r.left, top: r.bottom + 6, width: r.width });
+    }
+    updatePos();
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, true);
+    return () => {
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos, true);
+    };
+  }, [open]);
+
   return (
-    <div ref={ref} className="relative">
+    <div ref={anchorRef} className="relative">
       {/* trigger */}
       <button
         type="button"
@@ -76,80 +92,75 @@ function CompanyPicker({
       </button>
 
       {/* dropdown panel */}
-      {open && (
-        <div
-          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 rounded-2xl overflow-hidden"
-          style={{
-            background: "#1a1614",
-            border: "1.5px solid rgba(255,206,0,0.28)",
-            boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
-          }}
-        >
-          {/* search */}
+      {open &&
+        pos &&
+        createPortal(
           <div
-            className="flex items-center gap-2 px-3 py-2.5"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+              position: "fixed",
+              left: pos.left,
+              top: pos.top,
+              width: pos.width,
+              zIndex: 1000,
+              background: "#1a1614",
+              border: "1.5px solid rgba(255,206,0,0.28)",
+              boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+            }}
           >
-            <Search size={13} style={{ color: "rgba(255,255,255,0.4)", flexShrink: 0 }} />
-            <input
-              autoFocus
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search…"
-              className="flex-1 bg-transparent outline-none text-sm"
-              style={{ color: "#fff" }}
-            />
-          </div>
-
-          {/* list */}
-          <div className="overflow-y-auto" style={{ maxHeight: 220 }}>
-            {loadState === "error" && (
-              <button
-                type="button"
-                className="w-full px-4 py-3 text-sm text-left"
-                style={{ color: "#ED4551" }}
-                onClick={onRetry}
-              >
-                Could not load — tap to retry
-              </button>
-            )}
-            {filtered.length === 0 && loadState === "ready" && (
-              <p className="px-4 py-3 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
-                No match
-              </p>
-            )}
-            {filtered.map((c) => {
-              const isActive = c.id === value;
-              return (
+            <div className="overflow-y-auto" style={{ maxHeight: 260 }}>
+              {loadState === "error" && (
                 <button
-                  key={c.id}
                   type="button"
-                  onClick={() => { onChange(c.id); setOpen(false); setQ(""); }}
-                  className="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-left transition-colors"
-                  style={{
-                    color: isActive ? "#FFCE00" : "rgba(255,255,255,0.85)",
-                    background: isActive ? "rgba(255,206,0,0.10)" : "transparent",
-                    fontWeight: isActive ? 700 : 500,
-                    borderLeft: isActive ? "3px solid #FFCE00" : "3px solid transparent",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-                  }}
+                  className="w-full px-4 py-3 text-sm text-left"
+                  style={{ color: "#ED4551" }}
+                  onClick={onRetry}
                 >
-                  <span className="flex items-center gap-2">
-                    <Building2 size={13} style={{ color: isActive ? "#FFCE00" : "rgba(255,255,255,0.35)", flexShrink: 0 }} />
-                    {c.name}
-                  </span>
-                  {isActive && <Check size={13} style={{ color: "#FFCE00", flexShrink: 0 }} />}
+                  Could not load — tap to retry
                 </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+              )}
+              {companies.map((c) => {
+                const isActive = c.id === value;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => {
+                      onChange(c.id);
+                      setOpen(false);
+                    }}
+                    className="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-left transition-colors"
+                    style={{
+                      color: isActive ? "#FFCE00" : "rgba(255,255,255,0.85)",
+                      background: isActive ? "rgba(255,206,0,0.10)" : "transparent",
+                      fontWeight: isActive ? 700 : 500,
+                      borderLeft: isActive ? "3px solid #FFCE00" : "3px solid transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                    }}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Building2
+                        size={13}
+                        style={{
+                          color: isActive ? "#FFCE00" : "rgba(255,255,255,0.35)",
+                          flexShrink: 0,
+                        }}
+                      />
+                      {c.name}
+                    </span>
+                    {isActive && <Check size={13} style={{ color: "#FFCE00", flexShrink: 0 }} />}
+                  </button>
+                );
+              })}
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
