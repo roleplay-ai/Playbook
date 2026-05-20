@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
+import { NUDGEABLE_MAIN_APP_URL } from "@/lib/constants";
+import { ExternalLink } from "lucide-react";
 
 function NavLink({ href, activeColor, children }: { href: string; activeColor: string; children: React.ReactNode }) {
   const pathname = usePathname();
@@ -41,7 +43,15 @@ export function NudgeShell({ children }: { children: React.ReactNode }) {
           </nav>
         )}
 
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center gap-3 text-sm flex-wrap justify-end">
+          <a
+            href={NUDGEABLE_MAIN_APP_URL}
+            className="inline-flex items-center gap-1.5 rounded-full border-2 border-n-shadow bg-n-amber px-3 py-1.5 text-xs font-extrabold text-n-shadow no-underline hover:opacity-90 transition-opacity"
+            title="Open the main AI Cap app (aicap.nudgeable.app)"
+          >
+            Main app
+            <ExternalLink className="size-3.5 opacity-80" aria-hidden />
+          </a>
           {profile && (
             <span className="hidden sm:inline" style={{ color: "#221D23", fontWeight: 500 }}>
               @{profile.username}{isAdmin ? " · admin" : ""}
@@ -59,7 +69,7 @@ export function NudgeShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
       <main className="flex-1">{children}</main>
-      <footer className="px-6 md:px-12 py-6 text-center text-xs text-[var(--n-text-muted)] border-t border-[var(--n-border)]">
+      <footer className="px-6 md:px-12 py-6 text-center text-xs text-n-text-muted border-t border-n-border">
         Built by <span className="font-semibold">Nudgeable.ai</span>
       </footer>
     </div>
@@ -70,11 +80,11 @@ export function BrandLoader({ messages }: { messages: string[] }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 gap-6">
       <div className="relative">
-        <div className="w-16 h-16 rounded-full border-4 border-[var(--n-chiffon)] border-t-[var(--n-amber)] animate-spin" />
+        <div className="w-16 h-16 rounded-full border-4 border-n-chiffon border-t-n-amber animate-spin" />
       </div>
       <div className="text-center space-y-1">
         {messages.map((m, i) => (
-          <p key={i} className="text-[var(--n-text-muted)]" style={{ animation: `fadeMsg 4s ${i * 1.3}s infinite` }}>
+          <p key={i} className="text-n-text-muted" style={{ animation: `fadeMsg 4s ${i * 1.3}s infinite` }}>
             {m}
           </p>
         ))}

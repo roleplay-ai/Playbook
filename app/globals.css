@@ -1,23 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-/* Nudgeable.ai brand system */
+/* Nudgeable.ai brand system (aligned with nudgeable-app tailwind.config.ts) */
 :root {
-  --n-amber: #FFCE00;
-  --n-shadow: #221D23;
-  --n-blue: #623CEA;
-  --n-orange: #F68A29;
-  --n-chiffon: #FFF6CF;
-  --n-emerald: #23CE68;
-  --n-fuchsia: #ED4551;
-  --n-dodger: #3696FC;
-  --n-bg: #FFFDF5;
-  --n-card-bg: #FFFFFF;
-  --n-border: #E8E6DC;
-  --n-text: #221D23;
-  --n-text-muted: #6B6B6B;
+  --n-amber: #ffce00;
+  --n-shadow: #221d23;
+  --n-ink: #121212;
+  --n-blue: #623cea;
+  --n-orange: #f68a29;
+  /* Nudgeable design rulebook: lemon-chiffon page tone / bright-amber primary */
+  --n-chiffon: #fff6cf;
+  --n-emerald: #23ce68;
+  --n-fuchsia: #ed4551;
+  --n-dodger: #3696fc;
+  /* page background — rulebook lemon chiffon */
+  --n-bg: #fff6cf;
+  --n-card-bg: #ffffff;
+  --n-border: #e8e6dc;
+  --n-text: #221d23;
+  --n-text-muted: #6b6b6b;
+  /* warm editorial (home*) */
+  --n-home-canvas: #fdf9f0;
+  --n-home-ink: #1c1814;
+  --n-home-sidebar: #1a1614;
+  --n-home-clay: #c07b3a;
+  --n-home-nav-muted: #7a6a5a;
+  --n-home-subtle: #9e8e7a;
+  --n-home-body-muted: #6b5f52;
+  --n-home-warm-gray: #a89880;
+  --n-home-bullet-muted: #d0c4b4;
+  --n-home-divider: #f0ebe0;
+  --n-home-shell-line: #e8e2d8;
+  --n-home-video-meta: #5a4e44;
+  --n-home-cta-green: #2d5a3d;
+  --n-home-cta-navy: #1e3a5f;
+  --n-home-cta-purple: #4a2060;
 
   --radius: 16px;
 
@@ -76,6 +96,39 @@
   --color-n-text: var(--n-text);
   --color-n-text-muted: var(--n-text-muted);
 
+  /* Same names as nudgeable-app tailwind.config.ts (use: bg-amber, text-homeClay, border-nborder, …) */
+  --color-amber: #ffce00;
+  --color-shadow: #221d23;
+  --color-ink: #121212;
+  --color-nblue: #623cea;
+  --color-norange: #f68a29;
+  --color-chiffon: #fff6cf;
+  --color-emerald: #23ce68;
+  --color-fuchsia: #ed4551;
+  --color-dodger: #3696fc;
+  --color-bg: #fff6cf;
+  --color-nborder: #e8e6dc;
+  /* nudgeable `muted` text gray — use text-n-muted (shadcn `muted` stays surface: chiffon) */
+  --color-n-muted: #6b6b6b;
+  --color-homeCanvas: #fdf9f0;
+  --color-homeInk: #1c1814;
+  --color-homeSidebar: #1a1614;
+  --color-homeClay: #c07b3a;
+  --color-homeNavMuted: #7a6a5a;
+  --color-homeSubtle: #9e8e7a;
+  --color-homeBodyMuted: #6b5f52;
+  --color-homeWarmGray: #a89880;
+  --color-homeBulletMuted: #d0c4b4;
+  --color-homeDivider: #f0ebe0;
+  --color-homeShellLine: #e8e2d8;
+  --color-homeVideoMeta: #5a4e44;
+  --color-homeCtaGreen: #2d5a3d;
+  --color-homeCtaNavy: #1e3a5f;
+  --color-homeCtaPurple: #4a2060;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -86,7 +139,7 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { background: var(--n-bg); color: var(--n-text); font-family: 'Inter', system-ui, sans-serif; }
+  html, body { background: var(--n-bg); color: var(--n-text); font-family: var(--font-sans); }
   h1, h2, h3 { font-weight: 800; letter-spacing: -0.02em; }
   body { font-size: 15px; }
 }
@@ -112,6 +165,82 @@
     box-shadow: 0 2px 12px rgba(34, 29, 35, 0.08);
     padding: 24px;
     border: 1px solid var(--n-border);
+  }
+
+  /**
+   * Login / entry form — brand black + yellow (Nudgeable design rulebook:
+   * --shadow-grey surface, --bright-amber accent, inset fields like .form-input)
+   */
+  .n-auth-shell {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: 1.75rem 1.75rem 1.5rem;
+    background: var(--n-shadow);
+    color: #fff;
+    border: 1px solid rgba(255, 206, 0, 0.38);
+    box-shadow:
+      0 0 0 1px rgba(255, 206, 0, 0.06),
+      0 20px 48px rgba(0, 0, 0, 0.28),
+      0 4px 20px rgba(255, 206, 0, 0.18);
+  }
+  @media (min-width: 768px) {
+    .n-auth-shell {
+      padding: 2rem 2rem 1.75rem;
+    }
+  }
+  .n-auth-shell::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--n-amber) 0%, #f5c518 50%, var(--n-orange) 100%);
+    pointer-events: none;
+  }
+  .n-auth-shell .n-step {
+    color: var(--n-amber);
+    letter-spacing: 0.12em;
+  }
+  .n-auth-shell .n-auth-title {
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .n-auth-shell .n-auth-lead,
+  .n-auth-shell .n-label {
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .n-auth-shell .n-auth-muted {
+    color: rgba(255, 255, 255, 0.52);
+  }
+  .n-auth-shell .n-auth-muted button {
+    color: rgba(255, 206, 0, 0.95);
+  }
+  .n-auth-shell .n-auth-muted button:hover {
+    color: #fff;
+  }
+  .n-auth-shell .n-input {
+    background: rgba(255, 251, 215, 0.14);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+  .n-auth-shell .n-input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+  }
+  .n-auth-shell .n-input:focus {
+    border-color: var(--n-amber);
+    box-shadow: 0 0 0 3px rgba(255, 206, 0, 0.22);
+  }
+  .n-auth-shell .n-btn-primary {
+    box-shadow: 0 4px 20px rgba(255, 206, 0, 0.4);
+    font-weight: 800;
+  }
+  .n-auth-shell .n-btn-primary:hover:not(:disabled) {
+    box-shadow: 0 6px 26px rgba(255, 206, 0, 0.55);
   }
   .n-btn {
     display: inline-flex; align-items: center; justify-content: center;
@@ -175,7 +304,7 @@
 
   .n-mesh {
     position: relative;
-    background-color: #FFFDF5;
+    background-color: var(--n-bg);
     background-image: radial-gradient(circle at 90% 10%, rgba(255, 246, 207, 0.55) 0%, transparent 60%);
   }
 

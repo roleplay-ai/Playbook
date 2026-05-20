@@ -1,3 +1,6 @@
+/** Main Nudgeable app (AI Cap) — “back to product” from the Playbook */
+export const NUDGEABLE_MAIN_APP_URL = "https://aicap.nudgeable.app";
+
 export const ROLES = [
   "Customer Support",
   "Sales",

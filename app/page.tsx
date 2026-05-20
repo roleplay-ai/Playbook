@@ -6,11 +6,153 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { ensureAdmin, enterAudit, listCompaniesPublic, saveUserCompany, signInFacilitator } from "@/lib/auth.actions";
 import { NudgeShell } from "@/components/NudgeShell";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Building2, Sparkles } from "lucide-react";
+import { Building2, Sparkles, BrainCircuit, Zap, Target, Search, Check, ChevronDown, Loader2 } from "lucide-react";
 
 type LoadState = "loading" | "ready" | "error";
+
+/* ── Inline company picker ────────────────────────────────────
+   Dark-card-aware, searchable, amber-highlighted selection.    */
+function CompanyPicker({
+  companies,
+  value,
+  onChange,
+  loadState,
+  onRetry,
+}: {
+  companies: Array<{ id: string; name: string }>;
+  value: string;
+  onChange: (id: string) => void;
+  loadState: LoadState;
+  onRetry?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  const selected = companies.find((c) => c.id === value);
+  const filtered = q.trim()
+    ? companies.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()))
+    : companies;
+
+  // close on outside click
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      {/* trigger */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="n-input w-full flex items-center justify-between gap-2 text-left"
+        style={{ minHeight: 48 }}
+      >
+        {loadState === "loading" ? (
+          <span className="flex items-center gap-2 opacity-60">
+            <Loader2 size={14} className="animate-spin" /> Loading companies…
+          </span>
+        ) : selected ? (
+          <span className="flex items-center gap-2 font-semibold" style={{ color: "#fff" }}>
+            <Building2 size={14} style={{ color: "#FFCE00" }} />
+            {selected.name}
+          </span>
+        ) : (
+          <span style={{ color: "rgba(255,255,255,0.45)" }}>Select your company</span>
+        )}
+        <ChevronDown
+          size={15}
+          style={{
+            color: "rgba(255,255,255,0.45)",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.18s ease",
+          }}
+        />
+      </button>
+
+      {/* dropdown panel */}
+      {open && (
+        <div
+          className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 rounded-2xl overflow-hidden"
+          style={{
+            background: "#1a1614",
+            border: "1.5px solid rgba(255,206,0,0.28)",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+          }}
+        >
+          {/* search */}
+          <div
+            className="flex items-center gap-2 px-3 py-2.5"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}
+          >
+            <Search size={13} style={{ color: "rgba(255,255,255,0.4)", flexShrink: 0 }} />
+            <input
+              autoFocus
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search…"
+              className="flex-1 bg-transparent outline-none text-sm"
+              style={{ color: "#fff" }}
+            />
+          </div>
+
+          {/* list */}
+          <div className="overflow-y-auto" style={{ maxHeight: 220 }}>
+            {loadState === "error" && (
+              <button
+                type="button"
+                className="w-full px-4 py-3 text-sm text-left"
+                style={{ color: "#ED4551" }}
+                onClick={onRetry}
+              >
+                Could not load — tap to retry
+              </button>
+            )}
+            {filtered.length === 0 && loadState === "ready" && (
+              <p className="px-4 py-3 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>
+                No match
+              </p>
+            )}
+            {filtered.map((c) => {
+              const isActive = c.id === value;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => { onChange(c.id); setOpen(false); setQ(""); }}
+                  className="w-full flex items-center justify-between gap-3 px-4 py-3 text-sm text-left transition-colors"
+                  style={{
+                    color: isActive ? "#FFCE00" : "rgba(255,255,255,0.85)",
+                    background: isActive ? "rgba(255,206,0,0.10)" : "transparent",
+                    fontWeight: isActive ? 700 : 500,
+                    borderLeft: isActive ? "3px solid #FFCE00" : "3px solid transparent",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)";
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+                  }}
+                >
+                  <span className="flex items-center gap-2">
+                    <Building2 size={13} style={{ color: isActive ? "#FFCE00" : "rgba(255,255,255,0.35)", flexShrink: 0 }} />
+                    {c.name}
+                  </span>
+                  {isActive && <Check size={13} style={{ color: "#FFCE00", flexShrink: 0 }} />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function IndexPage() {
   const { user, profile, loading } = useAuth();
@@ -130,130 +272,175 @@ export default function IndexPage() {
 
   return (
     <NudgeShell>
-      <div className="max-w-6xl mx-auto px-4 py-10 md:py-16">
-        <div className="grid lg:grid-cols-[1.3fr_1fr] gap-10 items-start mb-16">
-          <section>
-            <p className="n-step mb-3">Frameworks to apply AI at work</p>
-            <h1 className="text-4xl md:text-6xl font-black leading-[1.05] mb-4" style={{ color: "#221D23" }}>
-              AI for Work <span style={{ color: "#F68A29" }}>Playbook</span>
-            </h1>
-            <p className="text-xl md:text-2xl font-semibold mb-4 leading-snug" style={{ color: "#221D23" }}>
-              Learn where you are, where AI fits, and where AI can create real value in your work.
-            </p>
-            <p className="text-[var(--n-text-muted)] text-lg mb-8 max-w-xl">
-              A practical journey to help professionals move from random AI use to confident AI application at work.
-            </p>
-          </section>
+      {/* Full-viewport centred split layout */}
+      <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-5xl grid lg:grid-cols-[1fr_420px] gap-8 lg:gap-16 items-center">
 
-          {/* Company picker — shown to SSO users who are logged in but have no company yet */}
-          {pickingCompany ? (
-            <div id="entry">
-              <div className="n-card">
-                <p className="n-step mb-3 flex items-center gap-1">
-                  <Building2 size={12} /> One more step
-                </p>
-                <h2 className="text-lg font-bold mb-1" style={{ color: "#221D23" }}>Choose your company</h2>
-                <p className="text-sm text-[var(--n-text-muted)] mb-4">
-                  Select the company you&apos;re attending this workshop with so we can group your results correctly.
-                </p>
+          {/* ── Left: brand panel ── */}
+          <div className="flex flex-col gap-6">
+            {/* wordmark cluster */}
+            <div>
+              <p className="n-step mb-2">AI for Work</p>
+              <h1
+                className="text-5xl md:text-7xl font-black leading-none tracking-tight"
+                style={{ color: "#221D23" }}
+              >
+                Play<span style={{ color: "#FFCE00" }}>book</span>
+              </h1>
+            </div>
+
+            {/* one-line tagline */}
+            <p className="text-lg font-semibold leading-snug max-w-sm" style={{ color: "#4A4047" }}>
+              Know where AI fits. Map your opportunities. Take action.
+            </p>
+
+            {/* 3 icon chips — no paragraphs */}
+            <div className="flex flex-wrap gap-3">
+              {[
+                { icon: <BrainCircuit size={14} />, label: "CAB Ladder" },
+                { icon: <Target size={14} />,       label: "AI Fit Test" },
+                { icon: <Zap size={14} />,           label: "Opportunity Map" },
+              ].map(({ icon, label }) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold"
+                  style={{
+                    background: "rgba(255,206,0,0.18)",
+                    color: "#221D23",
+                    border: "1.5px solid rgba(255,206,0,0.45)",
+                  }}
+                >
+                  {icon} {label}
+                </span>
+              ))}
+            </div>
+
+            {/* decorative accent bar */}
+            <div
+              className="hidden lg:block w-16 h-1 rounded-full"
+              style={{ background: "linear-gradient(90deg,#FFCE00,#F68A29)" }}
+            />
+          </div>
+
+          {/* ── Right: form panel ── */}
+          <div ref={entryRef} id="entry">
+            {pickingCompany ? (
+              /* Company picker for SSO users with no company yet */
+              <div className="n-auth-shell">
+                <div className="flex items-center gap-2 mb-5">
+                  <span
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(255,206,0,0.18)" }}
+                  >
+                    <Building2 size={15} style={{ color: "#FFCE00" }} />
+                  </span>
+                  <span className="n-auth-title text-base font-extrabold">One more step</span>
+                </div>
+
                 <form className="space-y-4" onSubmit={handleSaveCompany}>
-                  <div>
-                    <label className="n-label">Company</label>
-                    <Select value={pickedCompanyId} onValueChange={setPickedCompanyId}>
-                      <SelectTrigger className="n-input h-auto">
-                        <SelectValue placeholder={loadState === "loading" ? "Loading companies…" : "— Pick your company —"} />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white text-slate-900 z-50">
-                        {companies.map((c) => (
-                          <SelectItem key={c.id} value={c.id} className="cursor-pointer">{c.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <CompanyPicker
+                    companies={companies}
+                    value={pickedCompanyId}
+                    onChange={setPickedCompanyId}
+                    loadState={loadState}
+                    onRetry={loadCompanies}
+                  />
+
                   <button
                     type="submit"
                     disabled={savingCompany || !pickedCompanyId}
                     className="n-btn n-btn-primary n-btn-press w-full"
                   >
-                    {savingCompany ? "Saving…" : "Continue to Playbook →"}
+                    {savingCompany ? "Saving…" : "Continue →"}
                   </button>
                 </form>
               </div>
-            </div>
-          ) : (
-            <div ref={entryRef} id="entry">
-              <div className="n-card">
-                <p className="n-step mb-3 flex items-center gap-1">
-                  <Sparkles size={12} /> Workshop entry
-                </p>
+            ) : (
+              /* Main entry form */
+              <div className="n-auth-shell">
+                {/* header */}
+                <div className="flex items-center gap-2 mb-6">
+                  <span
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                    style={{ background: "rgba(255,206,0,0.18)" }}
+                  >
+                    <Sparkles size={15} style={{ color: "#FFCE00" }} />
+                  </span>
+                  <span className="n-auth-title text-base font-extrabold">
+                    {adminMode ? "Facilitator login" : "Workshop entry"}
+                  </span>
+                </div>
+
                 {!adminMode ? (
-                  <form className="space-y-4" onSubmit={handleEnter}>
-                    <div>
-                      <label className="n-label">Company email</label>
-                      <input
-                        className="n-input"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@company.com"
-                        required
-                        autoComplete="email"
-                      />
-                    </div>
-                    <div>
-                      <label className="n-label">Company</label>
-                      <Select value={companyId} onValueChange={setCompanyId}>
-                        <SelectTrigger className="n-input h-auto">
-                          <SelectValue placeholder={loadState === "loading" ? "Loading companies…" : "— Pick your company —"} />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white text-slate-900 z-50">
-                          {companies.map((c) => (
-                            <SelectItem key={c.id} value={c.id} className="cursor-pointer">{c.name}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-[var(--n-text-muted)] mt-2">
-                        {loadState === "loading" && "Loading companies…"}
-                        {loadState === "ready" && companies.length > 0 && `${companies.length} companies available`}
-                        {loadState === "ready" && companies.length === 0 && "No companies yet? Ask your facilitator to add one."}
-                        {loadState === "error" && (
-                          <button type="button" className="underline" onClick={loadCompanies}>
-                            Could not load — tap to retry
-                          </button>
-                        )}
-                      </p>
-                    </div>
-                    <button type="submit" disabled={busy} className="n-btn n-btn-primary n-btn-press w-full">
-                      {busy ? "Signing you in…" : "Enter the Playbook"}
+                  <form className="space-y-3" onSubmit={handleEnter}>
+                    <input
+                      className="n-input"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Work email"
+                      required
+                      autoComplete="email"
+                    />
+
+                    <CompanyPicker
+                      companies={companies}
+                      value={companyId}
+                      onChange={setCompanyId}
+                      loadState={loadState}
+                      onRetry={loadCompanies}
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={busy}
+                      className="n-btn n-btn-primary n-btn-press w-full mt-1"
+                    >
+                      {busy ? "Signing you in…" : "Enter the Playbook →"}
                     </button>
                   </form>
                 ) : (
-                  <form className="space-y-4" onSubmit={handleAdmin}>
-                    <div>
-                      <label className="n-label">Admin username</label>
-                      <input className="n-input" value={adminUser} onChange={(e) => setAdminUser(e.target.value)} required autoComplete="username" />
-                    </div>
-                    <div>
-                      <label className="n-label">Password</label>
-                      <input className="n-input" type="password" value={adminPass} onChange={(e) => setAdminPass(e.target.value)} required autoComplete="current-password" />
-                    </div>
-                    <button type="submit" disabled={busy} className="n-btn n-btn-primary n-btn-press w-full">
-                      {busy ? "Please wait…" : "Log in as admin"}
+                  <form className="space-y-3" onSubmit={handleAdmin}>
+                    <input
+                      className="n-input"
+                      placeholder="Username"
+                      value={adminUser}
+                      onChange={(e) => setAdminUser(e.target.value)}
+                      required
+                      autoComplete="username"
+                    />
+                    <input
+                      className="n-input"
+                      type="password"
+                      placeholder="Password"
+                      value={adminPass}
+                      onChange={(e) => setAdminPass(e.target.value)}
+                      required
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="submit"
+                      disabled={busy}
+                      className="n-btn n-btn-primary n-btn-press w-full mt-1"
+                    >
+                      {busy ? "Please wait…" : "Sign in →"}
                     </button>
                   </form>
                 )}
-                <p className="text-xs text-[var(--n-text-muted)] text-center mt-4">
+
+                <div className="mt-5 pt-4" style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}>
                   <button
                     type="button"
-                    className="underline hover:text-[var(--n-text)]"
+                    className="w-full text-xs n-auth-muted text-center hover:opacity-100 transition-opacity"
                     onClick={() => setAdminMode((m) => !m)}
                   >
-                    {adminMode ? "← Back to participant entry" : "Facilitator? Admin login"}
+                    {adminMode ? "← Participant entry" : "Facilitator / Admin →"}
                   </button>
-                </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+
         </div>
       </div>
     </NudgeShell>
