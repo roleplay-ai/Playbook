@@ -141,16 +141,160 @@ export default function HubPage() {
   return (
     <NudgeShell>
       <div className="max-w-6xl mx-auto px-4 py-10 md:py-14">
-        <section className="mb-10">
-          <p className="n-step mb-3">AI for Work Playbook</p>
-          <h1 className="text-4xl md:text-6xl font-black leading-tight mb-3" style={{ color: "#221D23" }}>
-            Move from <span style={{ color: "#F68A29" }}>random AI use</span><br />
-            to real AI <span style={{ color: "#623CEA" }}>application</span> at work.
+
+        {/* ── Welcome header ── */}
+        <section className="mb-8">
+          <h1 className="text-3xl md:text-5xl font-black leading-tight tracking-tight">
+            Welcome to the{" "}
+            <span style={{ color: "#F68A29" }}>Nudgeable</span>{" "}
+            <span style={{ color: "#623CEA" }}>GenAI Masterclass.</span>
           </h1>
-          <p className="text-[var(--n-text-muted)] mb-6 max-w-2xl text-lg">
-            Understand your AI fluency, build judgement on where AI fits, and identify the work
-            activities where AI can create real productivity gains.
-          </p>
+        </section>
+
+        {/* ── Featured: Hands-on building session card ── */}
+        <section className="mb-10">
+          <div
+            className="relative rounded-3xl overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, #FFE45C 0%, #FFBC00 100%)",
+              boxShadow: "0 8px 40px rgba(255,188,0,0.30), 0 2px 8px rgba(34,29,35,0.10)",
+            }}
+          >
+            {/* subtle dot-grid texture overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: "radial-gradient(circle, rgba(34,29,35,0.06) 1px, transparent 1px)",
+                backgroundSize: "22px 22px",
+              }}
+            />
+
+            <div className="relative flex flex-col lg:flex-row lg:items-center gap-0">
+              {/* left: text + CTA */}
+              <div className="flex-1 px-8 md:px-10 py-8 md:py-10">
+                {/* badge */}
+                <span
+                  className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-black uppercase tracking-widest mb-6"
+                  style={{ background: "#221D23", color: "#fff" }}
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: "#FFCE00", boxShadow: "0 0 4px #FFCE00" }}
+                  />
+                  Featured · Hands-on
+                </span>
+
+                <h2
+                  className="text-3xl md:text-4xl font-black leading-tight mb-3"
+                  style={{ color: "#221D23" }}
+                >
+                  Hands-on AI Agent &amp;<br />
+                  Automation Building Session
+                </h2>
+                <p
+                  className="text-base font-medium mb-7 max-w-md"
+                  style={{ color: "rgba(34,29,35,0.68)" }}
+                >
+                  A guided, hands-on session to build live AI agents and automations — together, end to end.
+                </p>
+
+                <a
+                  href="https://nudgeable-ws.lovable.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-black no-underline"
+                  style={{
+                    background: "#221D23",
+                    color: "#fff",
+                    boxShadow: "0 4px 20px rgba(34,29,35,0.28)",
+                    transition: "transform 0.12s ease, box-shadow 0.15s ease",
+                  }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 8px 28px rgba(34,29,35,0.36)"; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.transform = ""; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 4px 20px rgba(34,29,35,0.28)"; }}
+                >
+                  Open building session →
+                </a>
+              </div>
+
+              {/* right: sunburst + floating labels */}
+              <div
+                className="relative hidden lg:flex items-center justify-center shrink-0"
+                style={{ width: 320, height: 240 }}
+              >
+                {/* outer glow ring */}
+                <div
+                  className="absolute rounded-full"
+                  style={{
+                    width: 140, height: 140,
+                    background: "rgba(34,29,35,0.08)",
+                    left: "50%", top: "50%",
+                    transform: "translate(-50%,-50%)",
+                  }}
+                />
+                {/* sunburst circle */}
+                <div
+                  className="absolute rounded-full flex items-center justify-center"
+                  style={{
+                    width: 100, height: 100,
+                    background: "#221D23",
+                    left: "50%", top: "50%",
+                    transform: "translate(-50%,-50%)",
+                    boxShadow: "0 8px 32px rgba(34,29,35,0.35)",
+                  }}
+                >
+                  <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+                    <circle cx="23" cy="23" r="9" fill="#FFCE00" />
+                    {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg) => (
+                      <line
+                        key={deg}
+                        x1="23" y1="3" x2="23" y2="10"
+                        stroke="#FFCE00" strokeWidth="2.5" strokeLinecap="round"
+                        transform={`rotate(${deg} 23 23)`}
+                      />
+                    ))}
+                  </svg>
+                </div>
+
+                {/* floating label chips */}
+                <span
+                  className="absolute rounded-2xl px-3.5 py-2 text-sm font-bold bg-white"
+                  style={{
+                    top: 18, right: 10, color: "#221D23", whiteSpace: "nowrap",
+                    boxShadow: "0 4px 16px rgba(34,29,35,0.14)",
+                    border: "1px solid rgba(34,29,35,0.06)",
+                  }}
+                >
+                  🤖 Automation
+                </span>
+                <span
+                  className="absolute rounded-2xl px-3.5 py-2 text-sm font-bold bg-white"
+                  style={{
+                    bottom: 44, left: 8, color: "#221D23", whiteSpace: "nowrap",
+                    boxShadow: "0 4px 16px rgba(34,29,35,0.14)",
+                    border: "1px solid rgba(34,29,35,0.06)",
+                  }}
+                >
+                  🎙️ Voice Agent
+                </span>
+                <span
+                  className="absolute rounded-2xl px-3.5 py-2 text-sm font-bold bg-white"
+                  style={{
+                    bottom: 16, right: 14, color: "#221D23", whiteSpace: "nowrap",
+                    boxShadow: "0 4px 16px rgba(34,29,35,0.14)",
+                    border: "1px solid rgba(34,29,35,0.06)",
+                  }}
+                >
+                  {"</>"} Vibe Coding
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── AI for Work Playbook ── */}
+        <section className="mb-6">
+          <p className="n-step mb-1">AI for Work Playbook</p>
+          <p className="text-[var(--n-text-muted)] text-sm font-medium">Your personalised AI adoption journey.</p>
         </section>
 
         <section className="mb-10">

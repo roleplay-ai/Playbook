@@ -295,7 +295,6 @@ export default function IndexPage() {
 
           {/* ── Left: brand panel ── */}
           <div className="flex flex-col gap-6">
-            {/* wordmark cluster */}
             <div>
               <p className="n-step mb-2">AI for Work</p>
               <h1
@@ -306,12 +305,10 @@ export default function IndexPage() {
               </h1>
             </div>
 
-            {/* one-line tagline */}
             <p className="text-lg font-semibold leading-snug max-w-sm" style={{ color: "#4A4047" }}>
               Know where AI fits. Map your opportunities. Take action.
             </p>
 
-            {/* 3 icon chips — no paragraphs */}
             <div className="flex flex-wrap gap-3">
               {[
                 { icon: <BrainCircuit size={14} />, label: "CAB Ladder" },
@@ -332,7 +329,6 @@ export default function IndexPage() {
               ))}
             </div>
 
-            {/* decorative accent bar */}
             <div
               className="hidden lg:block w-16 h-1 rounded-full"
               style={{ background: "linear-gradient(90deg,#FFCE00,#F68A29)" }}

@@ -16,8 +16,8 @@
   --n-emerald: #23ce68;
   --n-fuchsia: #ed4551;
   --n-dodger: #3696fc;
-  /* page background — rulebook lemon chiffon */
-  --n-bg: #fff6cf;
+  /* page background — warm off-white matching Nudgeable landing canvas */
+  --n-bg: #faf9f5;
   --n-card-bg: #ffffff;
   --n-border: #e8e6dc;
   --n-text: #221d23;
@@ -106,7 +106,7 @@
   --color-emerald: #23ce68;
   --color-fuchsia: #ed4551;
   --color-dodger: #3696fc;
-  --color-bg: #fff6cf;
+  --color-bg: #faf9f5;
   --color-nborder: #e8e6dc;
   /* nudgeable `muted` text gray — use text-n-muted (shadcn `muted` stays surface: chiffon) */
   --color-n-muted: #6b6b6b;
