@@ -24,9 +24,9 @@ export default function HubPage() {
   useEffect(() => {
     if (loading) return;
     if (!user) { router.push("/"); return; }
-    getPlaybookSummary().then(setSummary).catch(() => {});
+    getPlaybookSummary().then(setSummary).catch(() => { });
     if (profile?.is_admin) {
-      getAdminPlaybookOverview().then(setAdmin).catch(() => {});
+      getAdminPlaybookOverview().then(setAdmin).catch(() => { });
     }
   }, [loading, user, profile, router]);
 
@@ -51,9 +51,9 @@ export default function HubPage() {
 
   const microcopy =
     completedCount === 0 ? "This is where your AI journey gets practical." :
-    completedCount === 1 ? "Nice. Your first step is done." :
-    completedCount === 2 ? "You are moving from learning AI to applying AI." :
-                           "You have unlocked the full Playbook.";
+      completedCount === 1 ? "Nice. Your first step is done." :
+        completedCount === 2 ? "You are moving from learning AI to applying AI." :
+          "You have unlocked the full Playbook.";
 
   const cabBadge = summary?.cab
     ? { code: summary.cab.final_level, name: summary.cab.final_level_name }
@@ -199,7 +199,7 @@ export default function HubPage() {
                 </p>
 
                 <a
-                  href="https://nudgeable-ws.lovable.app"
+                  href="https://build-session.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-black no-underline"
@@ -244,7 +244,7 @@ export default function HubPage() {
                 >
                   <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
                     <circle cx="23" cy="23" r="9" fill="#FFCE00" />
-                    {[0,30,60,90,120,150,180,210,240,270,300,330].map((deg) => (
+                    {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
                       <line
                         key={deg}
                         x1="23" y1="3" x2="23" y2="10"
